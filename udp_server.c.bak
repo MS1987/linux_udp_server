@@ -19,7 +19,7 @@ char module_name[100] = "MKS";
 
 
 
-
+#if 0
 int get_local_ip(char *ip)
 {
 
@@ -71,6 +71,39 @@ int get_local_ip(char *ip)
 		return 0;
 
 	}
+
+}
+#endif
+
+int get_local_ip(char *ip) {
+
+        struct ifaddrs *ifAddrStruct;
+
+        void *tmpAddrPtr=NULL;
+
+        getifaddrs(&ifAddrStruct);
+
+        while (ifAddrStruct != NULL) {
+
+                if (ifAddrStruct->ifa_addr->sa_family==AF_INET) {
+
+                        tmpAddrPtr=&((struct sockaddr_in *)ifAddrStruct->ifa_addr)->sin_addr;
+
+                        inet_ntop(AF_INET, tmpAddrPtr, ip, INET_ADDRSTRLEN);
+
+                        printf("%s IP Address:%s\n", ifAddrStruct->ifa_name, ip);
+
+                }
+
+                ifAddrStruct=ifAddrStruct->ifa_next;
+
+        }
+
+        //free ifaddrs
+
+        freeifaddrs(ifAddrStruct);
+
+        return 0;
 
 }
 

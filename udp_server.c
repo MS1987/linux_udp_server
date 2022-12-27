@@ -11,6 +11,10 @@
 
 #include <arpa/inet.h>
 
+#include <ifaddrs.h>
+
+#include <arpa/inet.h>
+
 
 #define SERVER_PORT 8989
 #define BUFF_LEN 1024
