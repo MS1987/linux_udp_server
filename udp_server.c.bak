@@ -95,11 +95,11 @@ int get_local_ip(char *ip) {
 
                         inet_ntop(AF_INET, tmpAddrPtr, ip, INET_ADDRSTRLEN);
                         printf("%s IP Address:%s\n", ifAddrStruct->ifa_name, ip);
+						
+						if(strstr(ifAddrStruct->ifa_name, "eth") || strstr(ifAddrStruct->ifa_name, "wlan"))
+							break;
 
-                }                
-				
-				if(strstr(ifAddrStruct->ifa_name, "eth") || strstr(ifAddrStruct->ifa_name, "wlan"))
-					break;
+                }  
 				
 				ifAddrStruct=ifAddrStruct->ifa_next;
 
@@ -107,7 +107,7 @@ int get_local_ip(char *ip) {
 
         //free ifaddrs
 
-		if(ifAddrStruct == NULL)
+		//if(ifAddrStruct == NULL)
 			freeifaddrs(ifAddrStruct);
 
         return 0;
