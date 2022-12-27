@@ -94,15 +94,14 @@ int get_local_ip(char *ip) {
                         tmpAddrPtr=&((struct sockaddr_in *)ifAddrStruct->ifa_addr)->sin_addr;
 
                         inet_ntop(AF_INET, tmpAddrPtr, ip, INET_ADDRSTRLEN);
-						
-						if(strstr(ifAddrStruct->ifa_name, "eth") || strstr(ifAddrStruct->ifa_name, "wlan"))
-							break;
-
                         //printf("%s IP Address:%s\n", ifAddrStruct->ifa_name, ip);
 
                 }
 
                 ifAddrStruct=ifAddrStruct->ifa_next;
+				
+				if(strstr(ifAddrStruct->ifa_name, "eth") || strstr(ifAddrStruct->ifa_name, "wlan"))
+					break;
 
         }
 

@@ -94,15 +94,14 @@ int get_local_ip(char *ip) {
                         tmpAddrPtr=&((struct sockaddr_in *)ifAddrStruct->ifa_addr)->sin_addr;
 
                         inet_ntop(AF_INET, tmpAddrPtr, ip, INET_ADDRSTRLEN);
-						
-						if(strstr(ifAddrStruct->ifa_name, "eth") || strstr(ifAddrStruct->ifa_name, "wlan"))
-							break;
-
                         //printf("%s IP Address:%s\n", ifAddrStruct->ifa_name, ip);
 
                 }
 
                 ifAddrStruct=ifAddrStruct->ifa_next;
+				
+				if(strstr(ifAddrStruct->ifa_name, "eth") || strstr(ifAddrStruct->ifa_name, "wlan"))
+						break;
 
         }
 
@@ -200,8 +199,8 @@ void handle_udp_msg(int fd)
 			memcpy(&ReplyBuffer[strlen("mkswifi:")+ strlen(module_name) + 1], moduleId, strlen(moduleId)); 
 			ReplyBuffer[strlen("mkswifi:") + strlen(module_name) + strlen(moduleId) + 1] = ',';
 			
-			//strcpy(&ReplyBuffer[strlen("mkswifi:") + strlen(module_name) + strlen(moduleId) + 2], WiFi.localIP().toString().c_str()); 
-			//ReplyBuffer[strlen("mkswifi:") + strlen(module_name) + strlen(moduleId) + strlen(WiFi.localIP().toString().c_str()) + 2] = '\n';
+			strcpy(&ReplyBuffer[strlen("mkswifi:") + strlen(module_name) + strlen(moduleId) + 2], ipaddr); 
+			ReplyBuffer[strlen("mkswifi:") + strlen(module_name) + strlen(moduleId) + strlen(ipaddr) + 2] = '\n';
 			
 		}
 	
