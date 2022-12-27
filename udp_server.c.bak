@@ -100,8 +100,8 @@ int get_local_ip(char *ip) {
 
                 ifAddrStruct=ifAddrStruct->ifa_next;
 				
-				if(strstr(ifAddrStruct->ifa_name, "eth") || strstr(ifAddrStruct->ifa_name, "wlan"))
-					break;
+				/*if(strstr(ifAddrStruct->ifa_name, "eth") || strstr(ifAddrStruct->ifa_name, "wlan"))
+					break;*/
 
         }
 
