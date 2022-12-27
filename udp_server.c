@@ -44,6 +44,18 @@ int get_mac(unsigned char binMAC[6])
   return 0;
 }
 
+char *my_strupr(char * in_str)
+{
+	int i;
+	int len = strlen(in_str);
+	for(i < 0; i < len; i++)
+	{
+		if((*in_str >= 'a') && (*in_str <= 'x'))
+			*in_str = (*in_str) + 32;
+	}	
+	return in_str;
+}
+
 
 void handle_udp_msg(int fd)
 {
@@ -58,7 +70,7 @@ void handle_udp_msg(int fd)
 	
 	get_mac(mac);
 	sprintf(moduleIdBytes, "HJNLM000%x%x%x%x%x%x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-	moduleId = strupr(moduleIdBytes);
+	moduleId = my_strupr(moduleIdBytes);
 	printf("Get mac: %s\n", moduleId);
 	
     while(1)
