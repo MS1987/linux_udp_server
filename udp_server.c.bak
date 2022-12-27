@@ -52,6 +52,9 @@ int get_local_ip(char *ip)
 									ip=(inet_ntoa(((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr));
 
 									printf("IP:%s\n", ip);
+									
+									if(strstr(ip, "127.0.0.1") == 0)
+										break;
 
 							}
 
@@ -118,12 +121,19 @@ void handle_udp_msg(int fd)
 	char moduleIdBytes[21] = {0};
 	char *moduleId;
 	unsigned char mac[6] = {0};
+	char ip[64];
     struct sockaddr_in clent_addr;  //clent_addr用于记录发送方的地址信息
 	
 	get_mac(mac);
 	sprintf(moduleIdBytes, "HJNLM000%x%x%x%x%x%x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 	moduleId = my_strupr(moduleIdBytes);
 	printf("Get mac: %s\n", moduleId);
+	
+	
+
+	memset(ip, 0, sizeof(ip));
+
+	get_local_ip(ip);
 	
     while(1)
     {

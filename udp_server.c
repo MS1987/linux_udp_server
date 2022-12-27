@@ -52,6 +52,9 @@ int get_local_ip(char *ip)
 									ip=(inet_ntoa(((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr));
 
 									printf("IP:%s\n", ip);
+									
+									if(strstr(ip, "127.0.0.1") == 0)
+										break;
 
 							}
 
@@ -131,6 +134,7 @@ void handle_udp_msg(int fd)
 	memset(ip, 0, sizeof(ip));
 
 	get_local_ip(ip);
+	printf("Get ip addr:%s\n", ip);
 	
     while(1)
     {
