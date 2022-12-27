@@ -9,11 +9,63 @@
  
 #include <net/if.h> // struct ifreq
 
+#include <arpa/inet.h>
+
 
 #define SERVER_PORT 8989
 #define BUFF_LEN 1024
 
 char module_name[100] = "MKS";
+
+
+
+
+int get_local_ip(char *ip)
+{
+
+	int fd, intrface, retn = 0;
+
+	struct ifreq buf[INET_ADDRSTRLEN];
+
+	struct ifconf ifc;
+
+	if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) >= 0)
+	{
+
+			ifc.ifc_len = sizeof(buf);
+
+			// caddr_t,linux内核源码里定义的：typedef void *caddr_t；
+
+			ifc.ifc_buf = (caddr_t)buf;
+
+			if (!ioctl(fd, SIOCGIFCONF, (char *)&ifc))
+			{
+
+					intrface = ifc.ifc_len/sizeof(struct ifreq);
+
+					while (intrface-- > 0)
+					{
+
+							if (!(ioctl(fd, SIOCGIFADDR, (char *)&buf[intrface])))
+							{
+
+									ip=(inet_ntoa(((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr));
+
+									printf("IP:%s\n", ip);
+
+							}
+
+					}
+
+			}
+
+		close(fd);
+
+		return 0;
+
+	}
+
+}
 
  
 int get_mac(unsigned char binMAC[6])
@@ -66,12 +118,19 @@ void handle_udp_msg(int fd)
 	char moduleIdBytes[21] = {0};
 	char *moduleId;
 	unsigned char mac[6] = {0};
+	char ip[64];
     struct sockaddr_in clent_addr;  //clent_addr用于记录发送方的地址信息
 	
 	get_mac(mac);
 	sprintf(moduleIdBytes, "HJNLM000%x%x%x%x%x%x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 	moduleId = my_strupr(moduleIdBytes);
 	printf("Get mac: %s\n", moduleId);
+	
+	
+
+	memset(ip, 0, sizeof(ip));
+
+	get_local_ip(ip);
 	
     while(1)
     {

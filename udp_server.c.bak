@@ -9,11 +9,63 @@
  
 #include <net/if.h> // struct ifreq
 
+#include <arpa/inet.h>
+
 
 #define SERVER_PORT 8989
 #define BUFF_LEN 1024
 
 char module_name[100] = "MKS";
+
+
+
+
+int get_local_ip(char *ip)
+{
+
+	int fd, intrface, retn = 0;
+
+	struct ifreq buf[INET_ADDRSTRLEN];
+
+	struct ifconf ifc;
+
+	if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) >= 0)
+	{
+
+			ifc.ifc_len = sizeof(buf);
+
+			// caddr_t,linux内核源码里定义的：typedef void *caddr_t；
+
+			ifc.ifc_buf = (caddr_t)buf;
+
+			if (!ioctl(fd, SIOCGIFCONF, (char *)&ifc))
+			{
+
+					intrface = ifc.ifc_len/sizeof(struct ifreq);
+
+					while (intrface-- > 0)
+					{
+
+							if (!(ioctl(fd, SIOCGIFADDR, (char *)&buf[intrface])))
+							{
+
+									ip=(inet_ntoa(((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr));
+
+									printf("IP:%s\n", ip);
+
+							}
+
+					}
+
+			}
+
+		close(fd);
+
+		return 0;
+
+	}
+
+}
 
  
 int get_mac(unsigned char binMAC[6])
@@ -51,7 +103,7 @@ char *my_strupr(char * in_str)
 	for(i < 0; i < len; i++)
 	{
 		if((*(in_str + i) >= 'a') && (*(in_str + i) <= 'x'))
-			*(in_str + i) = (*(in_str + i)) + 32;
+			*(in_str + i) = (*(in_str + i)) - 32;
 	}	
 	return in_str;
 }
