@@ -55,8 +55,7 @@ void handle_udp_msg(int fd)
     struct sockaddr_in clent_addr;  //clent_addr用于记录发送方的地址信息
 	
 	get_mac(mac);
-	memcpy(moduleId, "HJNLM000", strlen("HJNLM000"));
-	memcpy(&moduleId[8], mac, sizeof(mac));
+	sprinf(moduleId, "HJNLM000%x%x%x%x%x%x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 	printf("Get mac: %s\n", mac);
 	
     while(1)
