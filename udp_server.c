@@ -37,6 +37,9 @@ int get_mac(unsigned char binMAC[6])
   puc = ifr.ifr_hwaddr.sa_data;
   close(sock);
   memcpy(binMAC, puc, 6);
+  printf("get mac:");
+  for(int i = 0; i < 6; i++)
+	printf("0x%x,", binMAC[i]);
   return 0;
 }
 

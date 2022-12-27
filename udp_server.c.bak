@@ -12,6 +12,8 @@
 #define SERVER_PORT 8989
 #define BUFF_LEN 1024
 
+char module_name[100] = "MKS";
+
  
 int get_mac(unsigned char binMAC[6])
 {
