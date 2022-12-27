@@ -1,0 +1,69 @@
+#include <stdio.h>
+ 2 #include <sys/types.h>
+ 3 #include <sys/socket.h>
+ 4 #include <netinet/in.h>
+ 5 #include <string.h>
+ 6 
+ 7 #define SERVER_PORT 8989
+ 8 #define BUFF_LEN 1024
+ 9 
+10 void handle_udp_msg(int fd)
+11 {
+12     char buf[BUFF_LEN];  //接收缓冲区，1024字节
+13     socklen_t len;
+14     int count;
+15     struct sockaddr_in clent_addr;  //clent_addr用于记录发送方的地址信息
+16     while(1)
+17     {
+18         memset(buf, 0, BUFF_LEN);
+19         len = sizeof(clent_addr);
+20         count = recvfrom(fd, buf, BUFF_LEN, 0, (struct sockaddr*)&clent_addr, &len);  //recvfrom是拥塞函数，没有数据就一直拥塞
+21         if(count == -1)
+22         {
+23             printf("recieve data fail!\n");
+24             return;
+25         }
+26         printf("client:%s\n",buf);  //打印client发过来的信息
+27         memset(buf, 0, BUFF_LEN);
+28         sprintf(buf, "I have recieved %d bytes data!\n", count);  //回复client
+29         printf("server:%s\n",buf);  //打印自己发送的信息给
+30         sendto(fd, buf, BUFF_LEN, 0, (struct sockaddr*)&clent_addr, len);  //发送信息给client，注意使用了clent_addr结构体指针
+31 
+32     }
+33 }
+34 
+35 
+36 /*
+37     server:
+38             socket-->bind-->recvfrom-->sendto-->close
+39 */
+40 
+41 int main(int argc, char* argv[])
+42 {
+43     int server_fd, ret;
+44     struct sockaddr_in ser_addr; 
+45 
+46     server_fd = socket(AF_INET, SOCK_DGRAM, 0); //AF_INET:IPV4;SOCK_DGRAM:UDP
+47     if(server_fd < 0)
+48     {
+49         printf("create socket fail!\n");
+50         return -1;
+51     }
+52 
+53     memset(&ser_addr, 0, sizeof(ser_addr));
+54     ser_addr.sin_family = AF_INET;
+55     ser_addr.sin_addr.s_addr = htonl(INADDR_ANY); //IP地址，需要进行网络序转换，INADDR_ANY：本地地址
+56     ser_addr.sin_port = htons(SERVER_PORT);  //端口号，需要网络序转换
+57 
+58     ret = bind(server_fd, (struct sockaddr*)&ser_addr, sizeof(ser_addr));
+59     if(ret < 0)
+60     {
+61         printf("socket bind fail!\n");
+62         return -1;
+63     }
+64 
+65     handle_udp_msg(server_fd);   //处理接收到的数据
+66 
+67     close(server_fd);
+68     return 0;
+69 }
