@@ -50,8 +50,8 @@ char *my_strupr(char * in_str)
 	int len = strlen(in_str);
 	for(i < 0; i < len; i++)
 	{
-		if((*in_str >= 'a') && (*in_str <= 'x'))
-			*in_str = (*in_str) + 32;
+		if((*(in_str + i) >= 'a') && (*(in_str + i) <= 'x'))
+			*(in_str + i) = (*(in_str + i)) + 32;
 	}	
 	return in_str;
 }

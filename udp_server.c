@@ -51,7 +51,7 @@ char *my_strupr(char * in_str)
 	for(i < 0; i < len; i++)
 	{
 		if((*(in_str + i) >= 'a') && (*(in_str + i) <= 'x'))
-			*(in_str + i) = (*(in_str + i)) + 32;
+			*(in_str + i) = (*(in_str + i)) - 32;
 	}	
 	return in_str;
 }
