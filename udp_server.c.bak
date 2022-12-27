@@ -52,6 +52,10 @@ int get_local_ip(char *ip)
 									ip=(inet_ntoa(((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr));
 
 									printf("IP:%s\n", ip);
+									printf("IP2:%d\n", (((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr[0]));
+									printf("IP3:%d\n", (((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr[1]));
+									printf("IP4:%d\n", (((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr[2]));
+									printf("IP5:%d\n", (((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr[3]));
 									
 									if(strstr(ip, "127.0.0.1") == 0)
 										break;
