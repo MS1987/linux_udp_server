@@ -4,15 +4,56 @@
 #include <netinet/in.h>
 #include <string.h>
 
+#include <sys/ioctl.h>
+ 
+#include <net/if.h> // struct ifreq
+
+
 #define SERVER_PORT 8989
 #define BUFF_LEN 1024
+
+ 
+int get_mac(unsigned char binMAC[6])
+{
+  int sock;
+  struct ifreq ifr;
+  unsigned char *puc;
+  memset(binMAC, 0, 6);
+  sock = socket(AF_INET, SOCK_DGRAM, 0);
+  if (sock == -1)
+  {
+    perror("socket");
+    return -1;
+  }
+  strcpy(ifr.ifr_name, "eth0"); 
+  if (ioctl(sock, SIOCGIFHWADDR, &ifr) < 0)
+  {
+    close(sock);
+    perror("ioctl");
+    return -1;
+  }
+  puc = ifr.ifr_hwaddr.sa_data;
+  close(sock);
+  memcpy(binMAC, puc, 6);
+  return 0;
+}
+
 
 void handle_udp_msg(int fd)
 {
     char buf[BUFF_LEN];  //接收缓冲区，1024字节
+	char  ReplyBuffer[100] = "mkswifi:";
     socklen_t len;
     int count;
+	char moduleId[21] = {0};
+	unsigned char mac[6] = {0};
     struct sockaddr_in clent_addr;  //clent_addr用于记录发送方的地址信息
+	
+	get_mac(mac);
+	memcpy(moduleId, "HJNLM000", strlen("HJNLM000"));
+	memcpy(&moduleId[8], mac, sizeof(mac));
+	printf("Get mac: %s\n", mac);
+	
     while(1)
     {
         memset(buf, 0, BUFF_LEN);
@@ -23,12 +64,27 @@ void handle_udp_msg(int fd)
             printf("recieve data fail!\n");
             return;
         }
+		
+		//收到mks wifi的搜索信息
+		if(strstr(buf, "mkswifi") != 0)
+		{
+			memcpy(&ReplyBuffer[strlen("mkswifi:")], module_name, strlen(module_name)); 
+			ReplyBuffer[strlen("mkswifi:") + strlen(module_name)] = ',';
+			
+			memcpy(&ReplyBuffer[strlen("mkswifi:")+ strlen(module_name) + 1], moduleId, strlen(moduleId)); 
+			ReplyBuffer[strlen("mkswifi:") + strlen(module_name) + strlen(moduleId) + 1] = ',';
+			
+			//strcpy(&ReplyBuffer[strlen("mkswifi:") + strlen(module_name) + strlen(moduleId) + 2], WiFi.localIP().toString().c_str()); 
+			//ReplyBuffer[strlen("mkswifi:") + strlen(module_name) + strlen(moduleId) + strlen(WiFi.localIP().toString().c_str()) + 2] = '\n';
+			
+		}
+	
         printf("client:%s\n",buf);  //打印client发过来的信息
         memset(buf, 0, BUFF_LEN);
-        sprintf(buf, "I have recieved %d bytes data!\n", count);  //回复client
-        printf("server:%s\n",buf);  //打印自己发送的信息给
-        sendto(fd, buf, BUFF_LEN, 0, (struct sockaddr*)&clent_addr, len);  //发送信息给client，注意使用了clent_addr结构体指针
-
+      //  sprintf(buf, "I have recieved %d bytes data!\n", count);  //回复client
+      //  printf("server:%s\n",buf);  //打印自己发送的信息给
+        sendto(fd, ReplyBuffer, sizeof(ReplyBuffer), 0, (struct sockaddr*)&clent_addr, len);  //发送信息给client，注意使用了clent_addr结构体指针
+		usleep(100);
     }
 }
 
