@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include <string.h>
 
+#include <ctype.h>
 #include <sys/ioctl.h>
  
 #include <net/if.h> // struct ifreq
@@ -50,13 +51,15 @@ void handle_udp_msg(int fd)
 	char  ReplyBuffer[100] = "mkswifi:";
     socklen_t len;
     int count;
-	char moduleId[21] = {0};
+	char moduleIdBytes[21] = {0};
+	char *moduleId;
 	unsigned char mac[6] = {0};
     struct sockaddr_in clent_addr;  //clent_addr用于记录发送方的地址信息
 	
 	get_mac(mac);
-	sprintf(moduleId, "HJNLM000%x%x%x%x%x%x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-	printf("Get mac: %s\n", mac);
+	sprintf(moduleIdBytes, "HJNLM000%x%x%x%x%x%x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+	moduleId = strupr(moduleIdBytes);
+	printf("Get mac: %s\n", moduleId);
 	
     while(1)
     {
