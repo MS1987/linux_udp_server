@@ -107,8 +107,8 @@ int get_local_ip(char *ip) {
 
         //free ifaddrs
 
-	
-    //    freeifaddrs(ifAddrStruct);
+		if(ifAddrStruct == NULL)
+			freeifaddrs(ifAddrStruct);
 
         return 0;
 
