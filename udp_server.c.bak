@@ -134,6 +134,7 @@ void handle_udp_msg(int fd)
 	memset(ip, 0, sizeof(ip));
 
 	get_local_ip(ip);
+	printf("Get ip addr:%s\n", ip);
 	
     while(1)
     {
