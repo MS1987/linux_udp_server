@@ -94,8 +94,11 @@ int get_local_ip(char *ip) {
                         tmpAddrPtr=&((struct sockaddr_in *)ifAddrStruct->ifa_addr)->sin_addr;
 
                         inet_ntop(AF_INET, tmpAddrPtr, ip, INET_ADDRSTRLEN);
+						
+						if(strstr(ifAddrStruct->ifa_name, "eth") || strstr(ifAddrStruct->ifa_name, "wlan"))
+							break;
 
-                        printf("%s IP Address:%s\n", ifAddrStruct->ifa_name, ip);
+                        //printf("%s IP Address:%s\n", ifAddrStruct->ifa_name, ip);
 
                 }
 
@@ -162,7 +165,7 @@ void handle_udp_msg(int fd)
 	char moduleIdBytes[21] = {0};
 	char *moduleId;
 	unsigned char mac[6] = {0};
-	char ip[64];
+	char ipaddr[64];
     struct sockaddr_in clent_addr;  //clent_addr用于记录发送方的地址信息
 	
 	get_mac(mac);
@@ -172,10 +175,10 @@ void handle_udp_msg(int fd)
 	
 	
 
-	memset(ip, 0, sizeof(ip));
+	memset(ipaddr, 0, sizeof(ipaddr));
 
-	get_local_ip(ip);
-	printf("Get ip addr:%s\n", ip);
+	get_local_ip(ipaddr);
+	printf("Get ip addr:%s\n", ipaddr);
 	
     while(1)
     {
@@ -197,8 +200,8 @@ void handle_udp_msg(int fd)
 			memcpy(&ReplyBuffer[strlen("mkswifi:")+ strlen(module_name) + 1], moduleId, strlen(moduleId)); 
 			ReplyBuffer[strlen("mkswifi:") + strlen(module_name) + strlen(moduleId) + 1] = ',';
 			
-			//strcpy(&ReplyBuffer[strlen("mkswifi:") + strlen(module_name) + strlen(moduleId) + 2], WiFi.localIP().toString().c_str()); 
-			//ReplyBuffer[strlen("mkswifi:") + strlen(module_name) + strlen(moduleId) + strlen(WiFi.localIP().toString().c_str()) + 2] = '\n';
+			strcpy(&ReplyBuffer[strlen("mkswifi:") + strlen(module_name) + strlen(moduleId) + 2], ipaddr); 
+			ReplyBuffer[strlen("mkswifi:") + strlen(module_name) + strlen(moduleId) + strlen(ipaddr) + 2] = '\n';
 			
 		}
 	
