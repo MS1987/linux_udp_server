@@ -551,7 +551,7 @@ void *thread_save_ip_func(void *argv)
 			get_local_ip(ipaddr);
 			if(strcmp(ipaddr, ipaddr_r) != 0)
 			{
-				fd=open(file,2);
+				fd=open(file_path,2);
 				if(fd<0)return -1;
 
 				ftruncate(fd,0);
@@ -565,6 +565,7 @@ void *thread_save_ip_func(void *argv)
 			}
 		}
 		sleep(5);
+	}
 		
     //退出线程
     pthread_exit(NULL);
