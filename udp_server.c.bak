@@ -534,7 +534,7 @@ void *thread_save_ip_func(void *argv)
 		
 		if (access(SAVE_IP_PATH, F_OK) == 0)
 		{
-			
+			printf("save_ip file exist\n");
 			strcpy(file_path, SAVE_IP_PATH);
 			strcat(file_path, SAVE_IP_FILE);
 			fd = open(file_path, 2);
@@ -549,8 +549,10 @@ void *thread_save_ip_func(void *argv)
 			}
 			memset(ipaddr, 0, sizeof(ipaddr));
 			get_local_ip(ipaddr);
+			printf("get ipaddr:%s\n", ipaddr);
 			if(strcmp(ipaddr, ipaddr_r) != 0)
 			{
+				printf("ipaddr different\n");
 				fd=open(file_path,2);
 				if(fd<0)return -1;
 
