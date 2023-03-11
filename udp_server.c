@@ -523,7 +523,9 @@ void *thread_save_ip_func(void *argv)
 	
 	char ipaddr[64]={0};
 	char ipaddr_r[64]={0};
+	char file_buf[100]={0};
 	char file_path[200]={0};
+	char *p;
 	int fd;
 	
 	

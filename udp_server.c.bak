@@ -523,7 +523,9 @@ void *thread_save_ip_func(void *argv)
 	
 	char ipaddr[64]={0};
 	char ipaddr_r[64]={0};
+	char file_buf[100]={0};
 	char file_path[200]={0};
+	int fd;
 	
 	
     while(1)
@@ -534,7 +536,7 @@ void *thread_save_ip_func(void *argv)
 			
 			strcpy(file_path, SAVE_IP_PATH);
 			strcat(file_path, SAVE_IP_FILE);
-			int fd=open(file_path, 2);
+			fd = open(file_path, 2);
 			if(fd>=0)
 			{			
 				read(fd,file_buf,100);
@@ -546,49 +548,23 @@ void *thread_save_ip_func(void *argv)
 			}
 			memset(ipaddr, 0, sizeof(ipaddr));
 			get_local_ip(ipaddr);
-			strcmp(ipaddr, ipaddr_r)
+			if(strcmp(ipaddr, ipaddr_r) != 0)
+			{
+				fd=open(file,2);
+				if(fd<0)return -1;
+
+				ftruncate(fd,0);
+
+				/* 重新设置文件偏移量 */
+				lseek(fd,0,SEEK_SET);
+
+				write(fd, ipaddr, strlen(ipaddr));
+
+				close(fd);
+			}
 		}
 		sleep(5);
 		
-       
-		
-		//收到mks wifi的搜索信息
-		if(strstr(buf, "mkswifi") != 0)
-		{
-			int fd=open(DEV_NAME_PATH, 2);
-			if(fd>=0)
-			{			
-				read(fd,file_buf,100);
-				
-				p = trim(file_buf);
-				memset(module_name, 0, sizeof(module_name));
-				strcpy(module_name, p);
-				close(fd);
-			}
-			memset(ipaddr, 0, sizeof(ipaddr));
-			get_local_ip(ipaddr);
-			//printf("Get ip addr:%s\n", ipaddr);	
-				
-			memcpy(&ReplyBuffer[strlen("mkswifi:")], module_name, strlen(module_name)); 
-			ReplyBuffer[strlen("mkswifi:") + strlen(module_name)] = ',';
-			
-			memcpy(&ReplyBuffer[strlen("mkswifi:")+ strlen(module_name) + 1], moduleId, strlen(moduleId)); 
-			ReplyBuffer[strlen("mkswifi:") + strlen(module_name) + strlen(moduleId) + 1] = ',';
-			
-			strcpy(&ReplyBuffer[strlen("mkswifi:") + strlen(module_name) + strlen(moduleId) + 2], ipaddr); 
-			ReplyBuffer[strlen("mkswifi:") + strlen(module_name) + strlen(moduleId) + strlen(ipaddr) + 2] = '\n';
-			
-		}
-	
-        printf("client:%s\n",buf);  //打印client发过来的信息
-        memset(buf, 0, BUFF_LEN);
-      //  sprintf(buf, "I have recieved %d bytes data!\n", count);  //回复client
-      //  printf("server:%s\n",buf);  //打印自己发送的信息给
-        sendto(udp_server_fd, ReplyBuffer, sizeof(ReplyBuffer), 0, (struct sockaddr*)&clent_addr, len);  //发送信息给client，注意使用了clent_addr结构体指针
-		usleep(500);
-   
-
-
     //退出线程
     pthread_exit(NULL);
 }
