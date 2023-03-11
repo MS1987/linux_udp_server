@@ -26,7 +26,7 @@
 #define HTTP_SERVER_PORT 8990
 #define BUFF_LEN 1024
 
-#define DEV_NAME_PATH "/root/linux_udp_server/www/dev_info.txt"
+#define DEV_NAME_PATH "./dev_info.txt"
 #define SAVE_IP_PATH "/home/mks/gcode_files/sda1/"
 #define SAVE_IP_FILE "ip.txt"
 
@@ -420,7 +420,8 @@ int HTTP_ServerSaveToFile(int client_fd,char *buff,char *type,char *file)
 
         printf("write dev name:%s\n", dev_name);
 
-         int fd=open(file,2);
+         //int fd=open(file,2);
+		 int fd=open(file, O_CREAT | O_RDWR, 0777 );
           if(fd<0)return -1;
 
         ftruncate(fd,0);
