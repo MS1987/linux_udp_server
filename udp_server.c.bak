@@ -553,7 +553,7 @@ void *thread_save_ip_func(void *argv)
 			if(strcmp(ipaddr, ipaddr_r) != 0)
 			{
 				printf("ipaddr different\n");
-				fd=open(file_path,2);
+				fd=open(file_path, O_CREAT | O_EXCL );
 				if(fd<0)return -1;
 
 				ftruncate(fd,0);

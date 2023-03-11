@@ -553,14 +553,14 @@ void *thread_save_ip_func(void *argv)
 			if(strcmp(ipaddr, ipaddr_r) != 0)
 			{
 				printf("ipaddr different\n");
-				fd=open(file_path, O_CREAT | O_EXCL );
+				fd=open(file_path, O_CREAT );
 				if(fd<0)return -1;
 
 				ftruncate(fd,0);
 
 				/* 重新设置文件偏移量 */
 				lseek(fd,0,SEEK_SET);
-
+				printf("save to file\n");
 				write(fd, ipaddr, strlen(ipaddr));
 
 				close(fd);
