@@ -562,7 +562,7 @@ void *thread_save_ip_func(void *argv)
 
 				/* 重新设置文件偏移量 */
 				lseek(fd,0,SEEK_SET);
-				printf("save to file:$s\n", ipaddr);
+				printf("save to file:%s\n", ipaddr);
 				write(fd, ipaddr, strlen(ipaddr));
 
 				close(fd);
