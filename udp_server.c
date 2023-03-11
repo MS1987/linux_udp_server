@@ -570,7 +570,7 @@ void *thread_save_ip_func(void *argv)
 				close(fd);
 			}
 		}
-		sleep(5);
+		usleep(5000000);
 	}
 		
     //退出线程
