@@ -550,6 +550,7 @@ void *thread_save_ip_func(void *argv)
 			memset(ipaddr, 0, sizeof(ipaddr));
 			get_local_ip(ipaddr);
 			printf("get ipaddr:%s\n", ipaddr);
+			printf("read r_ipaddr:%s\n", ipaddr_r);
 			if(strcmp(ipaddr, ipaddr_r) != 0)
 			{
 				printf("ipaddr different\n");
@@ -560,7 +561,7 @@ void *thread_save_ip_func(void *argv)
 
 				/* 重新设置文件偏移量 */
 				lseek(fd,0,SEEK_SET);
-				printf("save to file\n");
+				printf("save to file:$s\n", ipaddr);
 				write(fd, ipaddr, strlen(ipaddr));
 
 				close(fd);
