@@ -545,8 +545,9 @@ void *thread_save_ip_func(void *argv)
 				p = trim(file_buf);
 				memset(ipaddr_r, 0, sizeof(ipaddr_r));
 				strcpy(ipaddr_r, p);
-				close(fd);
+				
 			}
+			close(fd);
 			memset(ipaddr, 0, sizeof(ipaddr));
 			get_local_ip(ipaddr);
 			printf("get ipaddr:%s\n", ipaddr);
